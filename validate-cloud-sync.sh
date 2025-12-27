@@ -244,7 +244,8 @@ run_validation() {
             rclone check "$LOCAL_PATH" encrypted: \
                 --config "$TEMP_RCLONE_CONF" \
                 --download \
-                --checkers 4 \
+                --checkers 16 \
+                --transfers 16 \
                 --progress
             
             local rc=$?
@@ -262,7 +263,7 @@ run_validation() {
             rclone check "$LOCAL_PATH" encrypted: \
                 --config "$TEMP_RCLONE_CONF" \
                 --size-only \
-                --checkers 8 \
+                --checkers 16 \
                 2>&1 | grep -v "No common hash"
             ;;
         list)
@@ -279,7 +280,7 @@ run_validation() {
             rclone copy encrypted: "$sample_dir" \
                 --config "$TEMP_RCLONE_CONF" \
                 --max-transfer 50M \
-                --transfers 4 \
+                --transfers 8 \
                 -v
             local count
             count=$(find "$sample_dir" -type f | wc -l)
