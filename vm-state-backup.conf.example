@@ -1,0 +1,10 @@
+# vm-state-backup config — one VM per line:  name  ip  parent_dir  subdir
+#
+# Copy this to `vm-state-backup.conf` (kept LOCAL / gitignored — it holds your
+# real LAN IPs) and edit the addresses. The example IPs below use RFC 5737
+# TEST-NET ranges; replace them with your VMs' actual addresses.
+#
+# name             ip            parent_dir      subdir
+musicassistant     192.0.2.13    /opt/mass       data
+nodered            192.0.2.14    /opt/nodered    data
+scrypted           192.0.2.15    /opt/scrypted   volume

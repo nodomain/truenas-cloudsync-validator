@@ -1,0 +1,16 @@
+# Local config holding real LAN IPs / secrets — never commit
+.env
+vm-state-backup.conf
+
+# Backup SSH keypair (if generated/copied into the repo dir)
+id_vmbackup
+id_vmbackup.pub
+
+# Backup artifacts
+*.tar
+*.tar.gz
+*.tgz
+
+# Python cruft
+__pycache__/
+*.pyc
