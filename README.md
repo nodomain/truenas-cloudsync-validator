@@ -105,6 +105,37 @@ TrueNAS GUI: **Tasks → Cron Jobs → Add**
 Currently supports:
 - SFTP (Hetzner Storage Box, any SFTP server)
 
+## VM-state backup (`deploy.sh`)
+
+A companion for backing up bhyve **VMs**. VM disks live in zvols (block devices),
+which Cloud Sync (file-based) can't push directly. `deploy.sh` instead pulls each
+VM's *state directory* into a Cloud-Synced dataset (so it rides your existing
+offsite sync) and adds an on-box ZFS snapshot of the VM dataset.
+
+Set it up (idempotent, via the REST API — needs `TRUENAS_API_KEY` in `.env`):
+
+```bash
+cp vm-state-backup.conf.example vm-state-backup.conf   # set your VMs' IPs
+./deploy.sh
+```
+
+On the NAS, `deploy.sh`:
+
+- uploads `vm-state-backup.sh`, `vm-state-backup.conf` and the backup SSH key,
+- creates a **recursive ZFS snapshot task** on the VM dataset (default `tank/vms`)
+  — on-box protection of the zvols,
+- creates a **daily cron job** that runs `vm-state-backup.sh`, which SSHes into
+  each configured VM, tars its state dir, and writes it atomically into
+  `VM_BACKUP_DEST` (default `/mnt/tank/archive/vm-state`) — a dataset your Cloud
+  Sync already pushes offsite.
+
+The backup SSH key (`id_vmbackup`, gitignored) is authorized on each VM as the
+`admin` user. Re-running `deploy.sh` only creates what's missing; if no key is
+present it generates one and prints the public key to authorize on the VMs.
+
+**Restore:** re-provision the VM from its repo, then extract its `*.tar.gz` from
+the `vm-state/` folder into the VM's data dir.
+
 ## License
 
 MIT
